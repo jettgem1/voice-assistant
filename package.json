@@ -1,21 +1,20 @@
 {
-  "name": "hume-evi-next-js-starter",
+  "name": "voice-assistant",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://github.com/humeai/hume-evi-next-js-starter",
+  "homepage": "https://github.com/jettgem1/voice-assistant",
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@humeai/voice-react": "^0.1.15",
-    "hume": "^0.8.10",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-toggle": "^1.0.3",
     "@types/react-virtualized": "^9.21.30",
+    "bun-types": "^1.1.30",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.2.10",
@@ -33,7 +32,6 @@
     "ts-pattern": "^5.1.2"
   },
   "devDependencies": {
-    "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
