@@ -4,6 +4,8 @@ import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { Nav } from "@/components/Nav";
 import { cn } from "@/utils";
+import { DeepgramContextProvider } from "./context/DeepgramContextProvider";
+import { MicrophoneContextProvider } from "./context/MicrophoneContextProvider";
 
 export const metadata: Metadata = {
   title: "Jett Gemmer Voice Interface",
@@ -25,8 +27,12 @@ export default function RootLayout({
         )}
       >
         <Nav />
-        {children}
+        <MicrophoneContextProvider>
+          <DeepgramContextProvider>
+            {children}
+          </DeepgramContextProvider>
+        </MicrophoneContextProvider>
       </body>
-    </html>
+    </html >
   );
 }

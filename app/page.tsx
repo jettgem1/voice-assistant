@@ -1,20 +1,20 @@
-import { getHumeAccessToken } from "@/utils/getHumeAccessToken";
-import dynamic from "next/dynamic";
+"use client";
 
-const Chat = dynamic(() => import("@/components/Chat"), {
-  ssr: false,
-});
+import Image from "next/image";
+import App from "./App";
+import Tts from "./context/TtsTest";
 
-export default async function Page() {
-  const accessToken = await getHumeAccessToken();
-
-  if (!accessToken) {
-    throw new Error();
-  }
-
+const Home = () => {
   return (
-    <div className={"grow flex flex-col"}>
-      <Chat accessToken={accessToken} />
-    </div>
+    <>
+      <div className="h-full overflow-hidden">
+        <main className="mx-auto">
+          <App />
+        </main>
+
+      </div>
+    </>
   );
-}
+};
+
+export default Home;

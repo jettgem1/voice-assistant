@@ -1,8 +1,8 @@
 "use client";
 
 import { useLayoutEffect, useState } from "react";
-import HumeLogo from "./logos/Hume";
-import { Button } from "./ui/button";
+import TomaLogo from "./logos/Toma";
+import { Button } from "../ui/button";
 import { Moon, Sun } from "lucide-react";
 import Github from "./logos/GitHub";
 import pkg from '@/package.json';
@@ -33,7 +33,9 @@ export const Nav = () => {
       }
     >
       <div>
-        <HumeLogo className={"h-5 w-auto"} />
+        <a href="https://www.toma.so/">
+          <TomaLogo className={"h-5 w-auto"} />
+        </a>
       </div>
       <div className={"ml-auto flex items-center gap-1"}>
         <Button
