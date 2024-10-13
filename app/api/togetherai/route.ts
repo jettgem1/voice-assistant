@@ -1,9 +1,6 @@
-// app/api/togetherai/route.ts
-
 import { NextResponse } from 'next/server';
 import Together from 'together-ai';
 
-// Initialize Together.ai client
 const together = new Together({ apiKey: process.env.TOGETHER_AI_API_KEY });
 
 export async function POST(request: Request) {
