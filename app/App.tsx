@@ -12,8 +12,10 @@ import {
   MicrophoneState,
   useMicrophone,
 } from "./context/MicrophoneContextProvider";
-import Visualizer from "./context/Visualizer";
+import Visualizer from "./components/Visualizer";
+import CalButton from "./components/CalButton";
 import { Phone } from "lucide-react";
+import TestAppointmentAPI from './components/TestingAppointment';
 
 const App: React.FC = () => {
   const [messages, setMessages] = useState<
@@ -21,7 +23,7 @@ const App: React.FC = () => {
   >([]);
   const [isLaunched, setIsLaunched] = useState<boolean>(false);
   const [isListening, setIsListening] = useState<boolean>(false);
-  const [isProcessing, setIsProcessing] = useState<boolean>(false); // New state for processing
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const { connection, connectToDeepgram, connectionState } = useDeepgram();
   const {
     setupMicrophone,
@@ -41,7 +43,6 @@ const App: React.FC = () => {
     };
 
     try {
-
       const response = await fetch("/api/togetherai", {
         method: "POST",
         headers: {
@@ -84,7 +85,7 @@ const App: React.FC = () => {
         if (ttsData.error) {
           console.error("Error generating audio:", ttsData.error);
         } else {
-          const audioContent = ttsData.audioContent; // Base64 string
+          const audioContent = ttsData.audioContent;
 
           await playAudio(audioContent);
 
@@ -179,7 +180,10 @@ const App: React.FC = () => {
     };
 
     if (connectionState === LiveConnectionState.OPEN) {
-      connection.addListener(LiveTranscriptionEvents.Transcript, onTranscript);
+      connection.addListener(
+        LiveTranscriptionEvents.Transcript,
+        onTranscript
+      );
       microphone.addEventListener(MicrophoneEvents.DataAvailable, onData);
 
       startMicrophone();
@@ -228,7 +232,7 @@ const App: React.FC = () => {
     conversationHistory: Array<{ role: string; content: string }>
   ) => {
     try {
-      setIsProcessing(true); // Start processing
+      setIsProcessing(true);
 
       // Filter out "Listening..." and "AI is processing..." messages before sending to AI
       const filteredHistory = conversationHistory.filter(
@@ -278,7 +282,7 @@ const App: React.FC = () => {
         if (ttsData.error) {
           console.error("Error generating audio:", ttsData.error);
         } else {
-          const audioContent = ttsData.audioContent; // Base64 string
+          const audioContent = ttsData.audioContent;
 
           // Play the audio and wait until it finishes before updating the messages
           await playAudio(audioContent);
@@ -297,21 +301,19 @@ const App: React.FC = () => {
         { role: "assistant", content: "Sorry, something went wrong." },
       ]);
     } finally {
-      setIsProcessing(false); // End processing
+      setIsProcessing(false);
     }
   };
 
   const playAudio = async (base64Audio: string) => {
     const audioSrc = "data:audio/wav;base64," + base64Audio;
 
-    // If there's an existing audio, pause and reset it
     if (currentAudioRef.current) {
       currentAudioRef.current.pause();
       currentAudioRef.current.currentTime = 0;
       currentAudioRef.current = null;
     }
 
-    // Create a new Audio object and assign it to the ref
     const audio = new Audio(audioSrc);
     currentAudioRef.current = audio;
 
@@ -327,8 +329,7 @@ const App: React.FC = () => {
       };
       audio
         .play()
-        .then(() => {
-        })
+        .then(() => { })
         .catch((error) => {
           console.error("Error initiating audio playback:", error);
           currentAudioRef.current = null;
@@ -342,24 +343,80 @@ const App: React.FC = () => {
     return () => {
       if (currentAudioRef.current) {
         currentAudioRef.current.pause();
-        currentAudioRef.current.currentTime = 0; // Reset playback position
+        currentAudioRef.current.currentTime = 0;
         currentAudioRef.current = null;
       }
     };
   }, []);
 
-  const endCall = () => {
+  // Modify endCall to be async and call the APIs
+  const endCall = async () => {
     setIsLaunched(false);
     stopMicrophone();
 
-    // Also stop any ongoing audio playback
     if (currentAudioRef.current) {
       currentAudioRef.current.pause();
-      currentAudioRef.current.currentTime = 0; // Reset playback position
+      currentAudioRef.current.currentTime = 0;
       currentAudioRef.current = null;
     }
 
-    setIsProcessing(false); // Ensure processing state is reset
+    setIsProcessing(false);
+
+    // Prepare the content from messages before resetting
+    const content = messages
+      .map((msg) => `${msg.role}: ${msg.content}`)
+      .join("\n");
+    
+    console.log(content)
+
+    try {
+      // Send POST request to /api/chat
+     
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ content }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      console.log(data)
+
+      if (data.type === "success") {
+        // Handle the successful appointment extraction
+        console.log("Appointment extracted:", data.appointment);
+
+        // Now call /api/cal with the appointment data
+        const calResponse = await fetch("/api/cal", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data.appointment),
+        });
+
+        if (!calResponse.ok) {
+          const errorData = await calResponse.json();
+          console.error("Error creating booking:", errorData);
+          // Optionally, display error to the user
+        } else {
+          const bookingData = await calResponse.json();
+          console.log("Booking created successfully:", bookingData);
+          // Optionally, display success message to the user
+        }
+      } else {
+        // Handle different error types from /api/chat
+        console.error("Error extracting appointment:", data);
+      }
+    } catch (error) {
+      console.error("Error in endCall process:", error);
+    }
 
     // Reset messages to initial value
     setMessages([]);
@@ -368,18 +425,22 @@ const App: React.FC = () => {
   return (
     <div className="flex h-full antialiased text-gray-900 dark:text-white transition-colors duration-300">
       {/* Parent div adjusts background and text based on dark mode */}
-      <div className="flex flex-col h-full w-full overflow-x-hidden">
+      <div className="flex flex-col h-full w-full overflow-hidden">
         {!isLaunched ? (
-          <div className="flex items-center justify-center h-screen">
+          <div className="flex items-center justify-center h-screen overflow-hidden">
             <button
               onClick={() => {
                 setIsLaunched(true);
-                triggerInitialMessage(); // Trigger the initial hello message when the app is launched
+                triggerInitialMessage();
               }}
               className="flex items-center gap-1.5 bg-blue-700 hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-400 text-white p-4 rounded shadow-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
             >
               <span>
-                <Phone className="size-4 opacity-50" strokeWidth={2} stroke={"currentColor"} />
+                <Phone
+                  className="size-4 opacity-50"
+                  strokeWidth={2}
+                  stroke={"currentColor"}
+                />
               </span>
               <span>Start Call</span>
             </button>
@@ -401,12 +462,10 @@ const App: React.FC = () => {
                 </div>
               ))}
               {isProcessing ? (
-                // Display "AI is processing" when processing
                 <div className="p-4 rounded max-w-lg bg-yellow-600 text-white self-center dark:bg-yellow-500">
                   AI is processing...
                 </div>
               ) : isListening ? (
-                // Otherwise, display "Listening..."
                 <div className="p-4 rounded max-w-lg bg-purple-600 text-white self-center dark:bg-purple-400">
                   Listening...
                 </div>
@@ -423,7 +482,11 @@ const App: React.FC = () => {
                     className="flex items-center gap-1 bg-red-700 hover:bg-red-600 dark:bg-red-500 dark:hover:bg-red-400 text-white pt-4 pb-4 pl-3 pr-3 rounded shadow-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-400"
                   >
                     <span>
-                      <Phone className="size-4 opacity-50" strokeWidth={2} stroke={"currentColor"} />
+                      <Phone
+                        className="size-4 opacity-50"
+                        strokeWidth={2}
+                        stroke={"currentColor"}
+                      />
                     </span>
                     <span>End Call</span>
                   </button>

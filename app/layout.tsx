@@ -6,6 +6,7 @@ import { Nav } from "@/components/Nav";
 import { cn } from "@/utils";
 import { DeepgramContextProvider } from "./context/DeepgramContextProvider";
 import { MicrophoneContextProvider } from "./context/MicrophoneContextProvider";
+import CalButton from './components/CalButton';
 
 export const metadata: Metadata = {
   title: "Jett Gemmer Voice Interface",
@@ -30,6 +31,7 @@ export default function RootLayout({
         <MicrophoneContextProvider>
           <DeepgramContextProvider>
             {children}
+            <CalButton />
           </DeepgramContextProvider>
         </MicrophoneContextProvider>
       </body>
