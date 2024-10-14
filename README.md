@@ -42,22 +42,22 @@ The project is live at [https://voice-assistant-mu.vercel.app/](https://voice-as
    ```
 
 3. Set up environment variables in a `.env.local` file:
-   ```.env.local
-  DEEPGRAM_API_KEY=YOUR_DEEPGRAM_API_KEY
-  TOGETHER_API_KEY=YOUR_TOGETHER_API_KEY
-  DEEPGRAM_ENV=YOUR_DEEPGRAM_ENV
-  CAL_API_KEY=YOUR_CAL_API_KEY
-  CAL_API_VERSION=2024-08-13
-  EVENT_TYPE_ID=YOUR_EVENT_TYPE_ID
-  OPENAI_API=YOUR_OPENAI_API
 
+   ```plaintext
+   DEEPGRAM_API_KEY=YOUR_DEEPGRAM_API_KEY
+   TOGETHER_API_KEY=YOUR_TOGETHER_API_KEY
+   DEEPGRAM_ENV=YOUR_DEEPGRAM_ENV
+   CAL_API_KEY=YOUR_CAL_API_KEY
+   CAL_API_VERSION=2024-08-13
+   EVENT_TYPE_ID=YOUR_EVENT_TYPE_ID
+   OPENAI_API_KEY=YOUR_OPENAI_API_KEY
    ```
 
 4. Start the development server:
    ```bash
    bun start
    ```
-```
+   
 ### Usage
 
 - Open [http://localhost:3000](http://localhost:3000) in your browser.
