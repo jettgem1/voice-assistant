@@ -1,4 +1,11 @@
 {
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/automate",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/automate/(.*)",
