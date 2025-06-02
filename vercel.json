@@ -16,5 +16,14 @@
         }
       ]
     }
+  ],
+  "domains": [
+    "jettgemmer.com"
+  ],
+  "rewrites": [
+    {
+      "source": "/automate/:path*",
+      "destination": "https://voice-assistant-mu.vercel.app/:path*"
+    }
   ]
 }
