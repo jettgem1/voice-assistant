@@ -6,11 +6,11 @@ import { Nav } from "@/components/Nav";
 import { cn } from "@/utils";
 import { DeepgramContextProvider } from "./context/DeepgramContextProvider";
 import { MicrophoneContextProvider } from "./context/MicrophoneContextProvider";
-import CalButton from './components/CalButton';
+// import CalButton from './components/CalButton';
 
 export const metadata: Metadata = {
-  title: "Jett Gemmer Voice Interface",
-  description: "A Next.js implementation of the Jett Gemmer Voice Interface",
+  title: "AutoMate Voice Assistant",
+  description: "An AI-powered voice assistant for scheduling automotive service appointments",
 };
 
 export default function RootLayout({
@@ -31,7 +31,7 @@ export default function RootLayout({
         <MicrophoneContextProvider>
           <DeepgramContextProvider>
             {children}
-            <CalButton />
+            {/* <CalButton /> */}
           </DeepgramContextProvider>
         </MicrophoneContextProvider>
       </body>

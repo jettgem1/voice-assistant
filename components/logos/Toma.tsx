@@ -1,9 +1,9 @@
 import type { FC, SVGAttributes } from "react";
 import { useId } from "react";
 
-export type HumeLogoProps = SVGAttributes<SVGSVGElement>;
+export type AutoMateLogoProps = SVGAttributes<SVGSVGElement>;
 
-export default function HumeLogo(props: HumeLogoProps) {
+export default function AutoMateLogo(props: AutoMateLogoProps) {
   const id = useId();
 
   return (

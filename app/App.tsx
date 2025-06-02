@@ -14,8 +14,9 @@ import {
 } from "./context/MicrophoneContextProvider";
 import Visualizer from "./components/Visualizer";
 import CalButton from "./components/CalButton";
-import { Phone } from "lucide-react";
+import { Phone, Mic } from "lucide-react";
 import TestAppointmentAPI from './components/TestingAppointment';
+import HowToUsePopup from './components/HowToUsePopup';
 
 const App: React.FC = () => {
   const [messages, setMessages] = useState<
@@ -24,6 +25,7 @@ const App: React.FC = () => {
   const [isLaunched, setIsLaunched] = useState<boolean>(false);
   const [isListening, setIsListening] = useState<boolean>(false);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [showHowToUse, setShowHowToUse] = useState<boolean>(true);
   const { connection, connectToDeepgram, connectionState } = useDeepgram();
   const {
     setupMicrophone,
@@ -130,7 +132,7 @@ const App: React.FC = () => {
   useEffect(() => {
     if (isLaunched && microphoneState === MicrophoneState.Ready) {
       connectToDeepgram({
-        model: "nova-2",
+        model: "nova-3",
         interim_results: true,
         smart_format: true,
         filler_words: true,
@@ -366,12 +368,12 @@ const App: React.FC = () => {
     const content = messages
       .map((msg) => `${msg.role}: ${msg.content}`)
       .join("\n");
-    
+
     console.log(content)
 
     try {
       // Send POST request to /api/chat
-     
+
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
@@ -433,16 +435,12 @@ const App: React.FC = () => {
                 setIsLaunched(true);
                 triggerInitialMessage();
               }}
-              className="flex items-center gap-1.5 bg-blue-700 hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-400 text-white p-4 rounded shadow-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="relative flex items-center justify-center w-16 h-16 rounded-full bg-green-600 hover:bg-green-500 dark:bg-green-500 dark:hover:bg-green-400 text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-400"
             >
-              <span>
-                <Phone
-                  className="size-4 opacity-50"
-                  strokeWidth={2}
-                  stroke={"currentColor"}
-                />
-              </span>
-              <span>Start Call</span>
+              <Mic className="size-6" />
+              {isLaunched && (
+                <div className="absolute inset-0 rounded-full border-2 border-red-500 animate-pulse-outline" />
+              )}
             </button>
           </div>
         ) : (
@@ -479,16 +477,10 @@ const App: React.FC = () => {
                 <div className="ml-4">
                   <button
                     onClick={endCall}
-                    className="flex items-center gap-1 bg-red-700 hover:bg-red-600 dark:bg-red-500 dark:hover:bg-red-400 text-white pt-4 pb-4 pl-3 pr-3 rounded shadow-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-400"
+                    className="relative flex items-center justify-center w-16 h-16 rounded-full bg-red-600 hover:bg-red-500 dark:bg-red-500 dark:hover:bg-red-400 text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-400"
                   >
-                    <span>
-                      <Phone
-                        className="size-4 opacity-50"
-                        strokeWidth={2}
-                        stroke={"currentColor"}
-                      />
-                    </span>
-                    <span>End Call</span>
+                    <Mic className="size-6" />
+                    <div className="absolute inset-0 rounded-full border-2 border-red-500 animate-pulse-outline" />
                   </button>
                 </div>
               </div>
@@ -496,6 +488,7 @@ const App: React.FC = () => {
           </>
         )}
       </div>
+      <HowToUsePopup isOpen={showHowToUse} onClose={() => setShowHowToUse(false)} />
     </div>
   );
 };

@@ -1,6 +1,6 @@
-# Toma Voice AI Agent
+# AutoMate Voice Assistant
 
-This is a voice-based AI agent developed for a take home assignment for Toma. The agent collects vehicle information from users, recommends services based on the vehicle type, and books appointments using Cal.com. It integrates speech-to-text (STT), language model (LLM), and text-to-speech (TTS) APIs to provide a seamless conversational experience.
+This is a voice-based AI assistant developed for automotive service appointment scheduling. The agent collects vehicle information from users, recommends services based on the vehicle type, and books appointments using Cal.com. It integrates speech-to-text (STT), language model (LLM), and text-to-speech (TTS) APIs to provide a seamless conversational experience.
 
 The project is live at [https://voice-assistant-mu.vercel.app/](https://voice-assistant-mu.vercel.app/).
 
